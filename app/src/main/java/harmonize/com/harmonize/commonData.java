@@ -1,4 +1,4 @@
-package harmonize.com.harmonize;
+/*package harmonize.com.harmonize;
 
 import android.service.autofill.UserData;
 import android.support.v7.app.AppCompatActivity;
@@ -210,6 +210,6 @@ public class commonData extends AppCompatActivity {
 
 
 
-}
+}*/
 
 
