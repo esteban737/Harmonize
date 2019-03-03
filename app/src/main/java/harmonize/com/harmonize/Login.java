@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.content.Intent;
 import android.util.Log;
+import android.content.SharedPreferences;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -19,20 +20,18 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 public class Login extends AppCompatActivity {
-    TextView temp;
+
 
 
     private static final int REQUEST_CODE = 1337;
     private static final String CLIENT_ID = "960b9fef24394d88ac8280307294ffa0";
     //private static final String CLIENT_ID = "91a9588ff6134f01af5870fc49e8e39d";
     private static final String REDIRECT_URI = "harmonize://callback";
+    private SharedPreferences spotify_access;
+    private SharedPreferences.Editor editor;
 
-    String ACCESS_CODE;
-     static String TOKENS;
 
     SpotifyApi api;
-
-
 
 
     @Override
@@ -50,26 +49,7 @@ public class Login extends AppCompatActivity {
     }
 
 
-    protected void getArtists() {
 
-        SpotifyService spotify = api.getService();
-
-        spotify.getArtist("0UWZUmn7sybxMCqrw9tGa7", new Callback<Artist>() {
-
-            @Override
-            public void success(Artist artist, Response response) {
-                Log.d("Artist success", artist.name);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("Artist failure", error.toString());
-            }
-        });
-
-
-
-        }
 
 
 
@@ -90,14 +70,10 @@ public class Login extends AppCompatActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
-                    //TOKENS = response.getAccessToken();
-                    Log.d("TESTTT",response.getAccessToken());
-                    api = new SpotifyApi();
-                    api.setAccessToken(response.getAccessToken().trim());
+                    saveToken(response.getAccessToken().trim());
+                    Intent gotoMenu = new Intent(this, MainMenu.class);
+                    startActivity(gotoMenu);
 
-                    //Log.d("Testttt", )
-
-                    getArtists();
                     break;
 
                 // Auth flow returned an error
@@ -115,8 +91,11 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    public void saveDocument(){
-
+    public void saveToken(String token){
+        spotify_access = getSharedPreferences("Login", MODE_PRIVATE);
+        editor = spotify_access.edit();
+        editor.putString("token", token);
+        editor.commit();
 
     }
 
